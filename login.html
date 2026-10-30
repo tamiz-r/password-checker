@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="SecurePass - Sign in to access your personal password strength checker and generator."/>
+  <title>SecurePass – Login</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <style>
+    /* ── Responsive Login Screen ── */
+    html, body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    .login-screen {
+      min-height: 100vh;
+      min-height: 100dvh;
+      width: 100%;
+      display: flex;
+      background: var(--bg);
+    }
+
+    /* Left panel — branding */
+    .login-brand {
+      width: 42%;
+      max-width: 580px;
+      background: var(--blue);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(24px, 5vw, 48px);
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    .login-brand-logo {
+      width: clamp(64px, 8vw, 84px);
+      height: clamp(64px, 8vw, 84px);
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .login-brand-logo svg {
+      width: clamp(36px, 5vw, 48px);
+      height: clamp(36px, 5vw, 48px);
+    }
+
+    .login-brand h1 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .login-brand p {
+      font-size: clamp(0.88rem, 1.5vw, 0.98rem);
+      opacity: 0.85;
+      max-width: 320px;
+      line-height: 1.6;
+    }
+
+    .brand-bullets {
+      list-style: none;
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .brand-bullets li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .brand-bullets li::before {
+      content: '✓';
+      background: rgba(255,255,255,0.2);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    /* Right panel — login form */
+    .login-form-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(24px, 5vw, 48px) clamp(16px, 4vw, 36px);
+      min-width: 0;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: clamp(24px, 4vw, 36px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .login-box h2 {
+      font-size: clamp(1.35rem, 2.5vw, 1.65rem);
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .login-box .login-sub {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      min-height: 46px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-family: var(--font);
+      background: var(--surface-alt);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-subtle);
+      background: var(--surface);
+    }
+
+    .login-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      font-size: 0.88rem;
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .remember-label input { width: auto; }
+
+    .login-error {
+      background: var(--red-subtle);
+      border: 1px solid var(--red-border);
+      border-left: 4px solid var(--red);
+      color: var(--red);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 0.875rem;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    .btn-login {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px;
+      background: var(--blue);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(21, 101, 192, 0.25);
+      transition: background-color 0.24s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.3px;
+    }
+
+    .btn-login:hover {
+      background: var(--blue-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(21, 101, 192, 0.35);
+    }
+    .btn-login:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: none;
+    }
+
+    .theme-toggle-login {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      z-index: 10;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .theme-toggle-login:hover {
+      background: var(--blue-subtle);
+      color: var(--blue);
+      border-color: var(--blue-border);
+      transform: rotate(20deg) scale(1.08);
+      box-shadow: 0 3px 8px rgba(21, 101, 192, 0.2);
+    }
+
+    .theme-toggle-login:active {
+      transform: rotate(-15deg) scale(0.92);
+    }
+
+    .theme-toggle-login svg { width: 18px; height: 18px; }
+
+    /* ---------- Responsive Breakpoints for Login ---------- */
+    @media (max-width: 860px) {
+      .login-screen {
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .login-brand {
+        width: 100%;
+        max-width: 100%;
+        padding: 32px 20px 24px;
+      }
+
+      .login-brand-logo {
+        margin-bottom: 12px;
+      }
+
+      .brand-bullets {
+        display: none; /* Keep mobile view compact & focused */
+      }
+
+      .login-form-panel {
+        padding: 24px 16px 40px;
+        align-items: flex-start;
+      }
+
+      .login-box {
+        box-shadow: none;
+        border: none;
+        background: transparent;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Theme toggle -->
+  <button class="theme-toggle-login" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark/light mode">
+    <svg id="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+    <svg id="moon" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
+  <div class="login-screen">
+
+    <!-- Left branding panel -->
+    <div class="login-brand">
+      <div class="login-brand-logo">
+        <svg viewBox="0 0 36 36" fill="none">
+          <path d="M12 17a6 6 0 1 1 12 0v1H12v-1z" fill="#fff" opacity=".5"/>
+          <rect x="10" y="18" width="16" height="11" rx="3" fill="#fff"/>
+          <circle cx="18" cy="23" r="2" fill="#1565C0"/>
+        </svg>
+      </div>
+      <h1>SecurePass</h1>
+      <p>Your personal password strength checker and secure password generator.</p>
+      <ul class="brand-bullets">
+        <li>Real-time password strength analysis</li>
+        <li>Cryptographically secure generator</li>
+        <li>100% local — nothing sent online</li>
+        <li>Dark mode &amp; saved session settings</li>
+      </ul>
+    </div>
+
+    <!-- Right login form -->
+    <div class="login-form-panel">
+      <div class="login-box">
+        <h2>Welcome back</h2>
+        <p class="login-sub">Sign in to access your SecurePass dashboard.</p>
+
+        <div class="login-error" id="loginError">
+          Incorrect username or password. Please try again.
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Enter your username" autocomplete="username" required/>
+          </div>
+
+          <div class="form-group">
+            <label for="loginPw">Password</label>
+            <input id="loginPw" type="password" placeholder="Enter your password" autocomplete="current-password" required/>
+          </div>
+
+          <div class="login-options">
+            <label class="remember-label">
+              <input type="checkbox" id="rememberMe"/> Remember me
+            </label>
+          </div>
+
+          <button class="btn-login" type="submit">Sign In</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    'use strict';
+
+    // ── Theme on load ───────────────────────────────────────────────────────
+    (function() {
+      const t = localStorage.getItem('sp-theme');
+      if (t === 'dark') {
+        document.documentElement.setAttribute('data-theme','dark');
+        const sun = document.getElementById('sun');
+        const moon = document.getElementById('moon');
+        if (sun) sun.style.display = 'none';
+        if (moon) moon.style.display = '';
+      }
+    })();
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const next = isDark ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('sp-theme', next);
+      document.getElementById('sun').style.display  = next === 'dark' ? 'none' : '';
+      document.getElementById('moon').style.display = next === 'dark' ? '' : 'none';
+    });
+
+    // ── If already logged in, skip to app ───────────────────────────────────
+    if (localStorage.getItem('sp-user')) {
+      window.location.href = 'index.html';
+    }
+
+    // ── Login handler ────────────────────────────────────────────────────────
+    function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('loginPw').value;
+      const remember = document.getElementById('rememberMe').checked;
+      const errEl    = document.getElementById('loginError');
+
+      // Hardcoded login credentials
+      const valid = username === 'admin' && password === 'admin123';
+
+      if (!valid) {
+        errEl.style.display = 'block';
+        document.getElementById('loginPw').value = '';
+        return;
+      }
+
+      errEl.style.display = 'none';
+
+      const now = new Date();
+      const user = {
+        username,
+        loginTime: now.toISOString(),
+        loginTimeDisplay: now.toLocaleString(),
+        remember,
+      };
+
+      localStorage.setItem('sp-user', JSON.stringify(user));
+
+      // Log the login
+      addLog(`Logged in as "${username}"`);
+
+      window.location.href = 'index.html';
+    }
+
+    function addLog(action) {
+      const logs = JSON.parse(localStorage.getItem('sp-logs') || '[]');
+      logs.unshift({ action, time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) });
+      if (logs.length > 30) logs.pop();
+      localStorage.setItem('sp-logs', JSON.stringify(logs));
+    }
+  </script>
+</body>
+</html>
